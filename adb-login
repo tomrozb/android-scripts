@@ -1,0 +1,15 @@
+#!/usr/bin/python
+
+import sys
+import subprocess
+
+if sys.argv[1] == "-h":
+  print "Place cursor in the login input field on your Android device. Your login and password will be completed automatically by the script."
+  exit()
+
+if len(sys.argv) < 3:
+  print "Usage: android-login LOGIN PASSWORD"
+  exit(1)
+
+command = "adb shell input text %s && adb shell input keyevent 66 && adb shell input text %s" % (sys.argv[1], sys.argv[2])
+subprocess.Popen(['bash', '-c', command])
