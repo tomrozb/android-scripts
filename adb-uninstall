@@ -27,7 +27,7 @@ GRADLE=`find . -maxdepth 1 -name gradle`
 IDEA=`find . -maxdepth 1 -name .idea`
 
 if [[ -z $BUILD_GRADLE ]] || [[ -z $GRADLE_PROPERTIES ]] || [[ -z $GRADLEW ]] || [[ -z $GRADLE ]] || [[ -z $IDEA ]]; then
-  echo "android-uninstall works only with Android Studio/IntelliJ IDEA projects managed by Gradle" >&2
+  echo "adb-uninstall works only with Android Studio/IntelliJ IDEA projects managed by Gradle" >&2
   echo "Your current directory $PWD is either not an Android project or the project structure is invalid" >&2
   exit 1
 fi
