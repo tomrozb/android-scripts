@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# Copyright 2014 Tomasz Rozbicki
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# TODO it's ugly copy & paste of adb-uninstall, rewrite it in more DRY way
+
+if [[ "-h" == "$1" ]]; then
+  echo Kills the application by applicationId found in the build.gradle file. It also kills all different build types of the application which provides applicationIdSuffix.
+  exit 0
+fi
+
+# make sure we're inside Android project - just check some Android Studio and Gradle specific files
+BUILD_GRADLE=`find . -maxdepth 1 -name build.gradle`
+GRADLE_PROPERTIES=`find . -maxdepth 1 -name gradle`
+GRADLEW=`find . -maxdepth 1 -name gradlew`
+GRADLE=`find . -maxdepth 1 -name gradle`
+IDEA=`find . -maxdepth 1 -name .idea`
+
+if [[ -z $BUILD_GRADLE ]] || [[ -z $GRADLE_PROPERTIES ]] || [[ -z $GRADLEW ]] || [[ -z $GRADLE ]] || [[ -z $IDEA ]]; then
+  echo "adb-kill works only with Android Studio/IntelliJ IDEA projects managed by Gradle" >&2
+  echo "Your current directory $PWD is either not an Android project or the project structure is invalid" >&2
+  exit 1
+fi
+
+# obtain package name and all suffixes for different build types
+PACKAGE=`find . -name build.gradle | xargs -iX grep -r "applicationId ['\"].*['\"]" X | sed "s/'/\"/g" | cut -d'"' -f2`
+SUFFIX=($(find . -name build.gradle | xargs -iX grep -r "applicationIdSuffix ['\"].*['\"]" X | sed "s/'/\"/g" | cut -d'"' -f2))
+
+# kills all application variants
+# TODO kill flavors
+SUFFIX+=("")
+for SUFF in "${SUFFIX[@]}"
+do
+  echo Kill $PACKAGE$SUFF
+  adb shell "am kill $PACKAGE$SUFF" &
+done
+
