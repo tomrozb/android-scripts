@@ -35,15 +35,18 @@ if [[ -z $BUILD_GRADLE ]] || [[ -z $GRADLE_PROPERTIES ]] || [[ -z $GRADLEW ]] ||
 fi
 
 # obtain package name and all suffixes for different build types
-PACKAGE=`find . -name build.gradle | xargs -iX grep -r "applicationId ['\"].*['\"]" X | sed "s/'/\"/g" | cut -d'"' -f2`
+PACKAGE=($(find . -name build.gradle | xargs -iX grep -r "applicationId ['\"].*['\"]" X | sed "s/'/\"/g" | cut -d'"' -f2))
 SUFFIX=($(find . -name build.gradle | xargs -iX grep -r "applicationIdSuffix ['\"].*['\"]" X | sed "s/'/\"/g" | cut -d'"' -f2))
 
 # kills all application variants
 # TODO kill flavors
 SUFFIX+=("")
-for SUFF in "${SUFFIX[@]}"
+for PACK in "${PACKAGE[@]}"
 do
-  echo Kill $PACKAGE$SUFF
-  adb shell "am kill $PACKAGE$SUFF" &
+  for SUFF in "${SUFFIX[@]}"
+  do
+    echo Kill $PACKAGE$SUFF
+    adb shell "am kill $PACKAGE$SUFF" &
+  done
 done
 
