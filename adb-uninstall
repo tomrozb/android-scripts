@@ -33,8 +33,8 @@ if [[ -z $BUILD_GRADLE ]] || [[ -z $GRADLE_PROPERTIES ]] || [[ -z $GRADLEW ]] ||
 fi
 
 # obtain package name and all suffixes for different build types
-PACKAGE=($(find . -name build.gradle | xargs -iX grep -r "applicationId ['\"].*['\"]" X | sed "s/'/\"/g" | cut -d'"' -f2))
-SUFFIX=($(find . -name build.gradle | xargs -iX grep -r "applicationIdSuffix ['\"].*['\"]" X | sed "s/'/\"/g" | cut -d'"' -f2))
+PACKAGE=($(find . -name build.gradle | xargs -iX grep -r "applicationId ['\"].*['\"]" X | sed "s/'/\"/g" | cut -d'"' -f2 | uniq))
+SUFFIX=($(find . -name build.gradle | xargs -iX grep -r "applicationIdSuffix ['\"].*['\"]" X | sed "s/'/\"/g" | cut -d'"' -f2 | uniq))
 
 # uninstall all application variants
 # TODO uninstall flavors
@@ -43,8 +43,8 @@ for PACK in "${PACKAGE[@]}"
 do
   for SUFF in "${SUFFIX[@]}"
   do
-    echo Uninstall $PACKAGE$SUFF
-    adb uninstall $PACKAGE$SUFF &
+    echo Uninstall $PACK$SUFF
+    adb uninstall $PACK$SUFF &
   done
 done
 
