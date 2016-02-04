@@ -22,7 +22,7 @@ if sys.argv[1] == "-h":
   exit()
 
 if len(sys.argv) < 3:
-  print "Usage: android-login LOGIN PASSWORD"
+  print "Usage: adb-login LOGIN PASSWORD"
   exit(1)
 
 command = "adb shell input text %s && adb shell input keyevent 66 && adb shell input text %s" % (sys.argv[1], sys.argv[2])
