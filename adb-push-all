@@ -1,2 +1,2 @@
 #!/bin/bash
-ls -1 | xargs -iX adb push X $1
+ls -Sr1 | xargs -iX adb push X $1
